@@ -107,7 +107,42 @@ const factories = {
 };
 
 function seeds(server) {
-  server.createList("unit", 3).forEach((unit) => {
-    server.createList("charge", Math.floor(Math.random() * 9), { unit });
+  server.create("unit", {
+    name: "Pod Point Office",
+    address: "Discovery House, 28–42 Banner Street",
+    postcode: "EC1Y 8QE",
+    charges: server.createList("charge", 3),
+  });
+
+  server.create("unit", {
+    name: "Horseferry Road",
+    address: "Horseferry Road",
+    postcode: "SW1P 2AF",
+    status: "charging",
+    charges: [server.create("charge", { finished_at: null })],
+  });
+
+  server.create("unit", {
+    name: "Tesco Kensington",
+    address: "West Cromwell Road",
+    postcode: "W14 8P8",
+    charges: server.createList("charge", 2),
+  });
+
+  server.create("unit", {
+    name: "Putney Exchange Shopping Center",
+    address: "Putney High St",
+    postcode: "SW15 1TW",
+    charges: server.createList("charge", 2),
+  });
+
+  server.create("unit", {
+    name: "University of Bath (East Car Park)",
+    address: "Claverton Down",
+    postcode: "BA 7PJ",
+    charges: [
+      server.create("charge"),
+      server.create("charge", { finished_at: null }),
+    ],
   });
 }
