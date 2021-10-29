@@ -112,3 +112,26 @@ test("viewing a unit", async () => {
     ],
   });
 });
+
+test("starting a charge", async () => {
+  const unitId = 123;
+  server.create("unit", { id: unitId, charges: [] });
+
+  await fetch(`/api/units/${unitId}/charges`, {
+    method: "POST",
+    body: JSON.stringify({
+      started_at: "1965-04-19T19:23:03+00:00",
+    }),
+  });
+
+  const unit = (await (await fetch(`/api/units/${unitId}`)).json()).data;
+
+  expect(unit.status).toBe("charging");
+  expect(unit.charges).toStrictEqual([
+    {
+      id: 1,
+      started_at: "1965-04-19T19:23:03+00:00",
+      finished_at: null,
+    },
+  ]);
+});
