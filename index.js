@@ -1,13 +1,20 @@
-import {belongsTo, createServer as mirageCreateServer, Factory, hasMany, Model, Serializer} from 'miragejs'
-import faker from 'faker'
-import {addHours} from 'date-fns'
-import {castIdsToIntegers} from "./utils";
+import {
+  belongsTo,
+  createServer as mirageCreateServer,
+  Factory,
+  hasMany,
+  Model,
+  Serializer,
+} from "miragejs";
+import faker from "faker";
+import { addHours } from "date-fns";
+import { castIdsToIntegers } from "./utils";
 
-faker.locale = 'en_GB';
+faker.locale = "en_GB";
 
 export default function createServer(options) {
   return new mirageCreateServer({
-    namespace: '/api',
+    namespace: "/api",
 
     models,
 
@@ -18,22 +25,25 @@ export default function createServer(options) {
     seeds,
 
     routes() {
-      this.get('/units');
+      this.get("/units");
 
-      this.get('/units/:id');
+      this.get("/units/:id");
 
-      this.post('/units/:id/charges', (schema, request) => {
+      this.post("/units/:id/charges", (schema, request) => {
         let unit = schema.units.find(request.params.id);
 
-        unit.update({status: 'charging'});
-        unit.createCharge({...(JSON.parse(request.requestBody)), finished_at: null});
+        unit.update({ status: "charging" });
+        unit.createCharge({
+          ...JSON.parse(request.requestBody),
+          finished_at: null,
+        });
       });
 
-      this.patch('/units/:unitId/charges/:chargeId', (schema, request) => {
+      this.patch("/units/:unitId/charges/:chargeId", (schema, request) => {
         let unit = schema.units.find(request.params.unitId);
         let charge = schema.charges.find(request.params.chargeId);
 
-        unit.update({status: 'available'});
+        unit.update({ status: "available" });
         charge.update(JSON.parse(request.requestBody));
       });
     },
@@ -54,19 +64,21 @@ const models = {
 const applicationSerializer = Serializer.extend({
   embed: true,
   keyForCollection() {
-    return 'data';
+    return "data";
   },
   keyForModel() {
-    return 'data';
+    return "data";
   },
   serialize() {
-    return castIdsToIntegers(Serializer.prototype.serialize.apply(this, arguments));
-  }
+    return castIdsToIntegers(
+      Serializer.prototype.serialize.apply(this, arguments)
+    );
+  },
 });
 
 const serializers = {
   application: applicationSerializer,
-  unit: applicationSerializer.extend({include: ['charges']}),
+  unit: applicationSerializer.extend({ include: ["charges"] }),
 };
 
 const factories = {
@@ -80,7 +92,7 @@ const factories = {
     postcode() {
       return faker.address.zipCode();
     },
-    status: 'available',
+    status: "available",
   }),
 
   charge: Factory.extend({
@@ -95,7 +107,7 @@ const factories = {
 };
 
 function seeds(server) {
-  server.createList('unit', 3).forEach(unit => {
-    server.createList('charge', Math.floor(Math.random() * 9), {unit});
+  server.createList("unit", 3).forEach((unit) => {
+    server.createList("charge", Math.floor(Math.random() * 9), { unit });
   });
 }
