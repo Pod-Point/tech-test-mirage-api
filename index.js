@@ -12,7 +12,7 @@ import { castIdsToIntegers } from "./utils";
 
 faker.locale = "en_GB";
 
-export default function createServer(options) {
+export function createServer(options) {
   return new mirageCreateServer({
     namespace: "/api",
 

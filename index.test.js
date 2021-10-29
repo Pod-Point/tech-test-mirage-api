@@ -1,4 +1,4 @@
-import createServer from "./index";
+import { createServer } from "./index";
 
 let server;
 beforeEach(() => {
