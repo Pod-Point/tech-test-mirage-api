@@ -1,10 +1,11 @@
-import { belongsTo, createServer as mirageCreateServer, Factory, hasMany, Model, Serializer } from 'miragejs'
+import {belongsTo, createServer as mirageCreateServer, Factory, hasMany, Model, Serializer} from 'miragejs'
 import faker from 'faker'
-import { addHours } from 'date-fns'
+import {addHours} from 'date-fns'
+import {castIdsToIntegers} from "./utils";
 
 faker.locale = 'en_GB';
 
-export default function createServer() {
+export default function createServer(options) {
   return new mirageCreateServer({
     namespace: '/api',
 
@@ -36,6 +37,8 @@ export default function createServer() {
         charge.update(JSON.parse(request.requestBody));
       });
     },
+
+    ...options,
   });
 }
 
@@ -56,6 +59,9 @@ const applicationSerializer = Serializer.extend({
   keyForModel() {
     return 'data';
   },
+  serialize() {
+    return castIdsToIntegers(Serializer.prototype.serialize.apply(this, arguments));
+  }
 });
 
 const serializers = {

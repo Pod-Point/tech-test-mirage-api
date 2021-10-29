@@ -7,10 +7,19 @@
     "name": "Pod Point Software Team",
     "email": "software@pod-point.com"
   },
+  "scripts": {
+    "test": "jest"
+  },
   "license": "MIT",
   "dependencies": {
     "date-fns": "^2.25.0",
     "faker": "^5.5.3",
     "miragejs": "^0.1.42"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "babel-jest": "^27.3.1",
+    "jest": "^27.3.1"
   }
 }
