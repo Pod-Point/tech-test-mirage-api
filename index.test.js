@@ -135,3 +135,36 @@ test("starting a charge", async () => {
     },
   ]);
 });
+
+test("finishing a charge", async () => {
+  const unitId = 123;
+  const chargeId = 456;
+  server.create("unit", {
+    id: unitId,
+    charges: [
+      server.create("charge", {
+        id: 456,
+        started_at: "1965-04-19T19:23:03+00:00",
+        finished_at: null,
+      }),
+    ],
+  });
+
+  await fetch(`/api/units/${unitId}/charges/${chargeId}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      finished_at: "1999-04-02T22:01:19+00:00",
+    }),
+  });
+
+  const unit = (await (await fetch(`/api/units/${unitId}`)).json()).data;
+
+  expect(unit.status).toBe("available");
+  expect(unit.charges).toStrictEqual([
+    {
+      id: chargeId,
+      started_at: "1965-04-19T19:23:03+00:00",
+      finished_at: "1999-04-02T22:01:19+00:00",
+    },
+  ]);
+});
