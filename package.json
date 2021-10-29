@@ -1,0 +1,16 @@
+{
+  "name": "tech-test-mirage-api",
+  "version": "0.1.0",
+  "description": "MirageJS API for use in front end and mobile tech tests",
+  "main": "index.js",
+  "author": {
+    "name": "Pod Point Software Team",
+    "email": "software@pod-point.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "date-fns": "^2.25.0",
+    "faker": "^5.5.3",
+    "miragejs": "^0.1.42"
+  }
+}
