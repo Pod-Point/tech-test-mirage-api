@@ -28,7 +28,16 @@ export function createServer(options) {
     routes() {
       this.get("/units");
 
-      this.get("/units/:id");
+      this.get("/units/:id", (schema, request) => {
+        let unitId = request.params.id;
+        let unit = schema.units.find(unitId);
+
+        if (!unit) {
+          return notFoundResponse(`Unit [ID ${unitId}] not found.`);
+        }
+
+        return unit;
+      });
 
       this.post("/units/:id/charges", (schema, request) => {
         const { started_at } = JSON.parse(request.requestBody);
@@ -47,10 +56,11 @@ export function createServer(options) {
           );
         }
 
-        let unit = schema.units.find(request.params.id);
+        let unitId = request.params.id;
+        let unit = schema.units.find(unitId);
 
         if (!unit) {
-          return new Response(404);
+          return notFoundResponse(`Unit [ID ${unitId}] not found.`);
         }
 
         unit.update({ status: "charging" });
@@ -182,4 +192,8 @@ function validationErrorResponse(key, error) {
       },
     }
   );
+}
+
+function notFoundResponse(message) {
+  return new Response(404, {}, { message });
 }

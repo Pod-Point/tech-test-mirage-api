@@ -121,7 +121,11 @@ test("viewing a unit", async () => {
 
 test("viewing a non-existent unit", async () => {
   const response = await fetch("/api/units/123");
+
   expect(response.status).toBe(404);
+  expect(await response.json()).toStrictEqual({
+    message: "Unit [ID 123] not found.",
+  });
 });
 
 test("starting a charge", async () => {
@@ -158,6 +162,9 @@ test("starting a charge on a non-existent unit", async () => {
   });
 
   expect(response.status).toBe(404);
+  expect(await response.json()).toStrictEqual({
+    message: "Unit [ID 123] not found.",
+  });
 });
 
 test("started_at is required", async () => {
