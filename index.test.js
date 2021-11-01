@@ -36,6 +36,9 @@ test("listing units", async () => {
   });
 
   const response = await fetch("/api/units");
+
+  expect(response.status).toBe(200);
+
   const json = await response.json();
 
   expect(json.data).toStrictEqual([
@@ -90,6 +93,9 @@ test("viewing a unit", async () => {
   });
 
   const response = await fetch(`/api/units/${id}`);
+
+  expect(response.status).toBe(200);
+
   const json = await response.json();
 
   expect(json.data).toStrictEqual({
@@ -122,12 +128,14 @@ test("starting a charge", async () => {
   const unitId = 123;
   server.create("unit", { id: unitId, charges: [] });
 
-  await fetch(`/api/units/${unitId}/charges`, {
+  const response = await fetch(`/api/units/${unitId}/charges`, {
     method: "POST",
     body: JSON.stringify({
       started_at: "1965-04-19T19:23:03+00:00",
     }),
   });
+
+  expect(response.status).toBe(201);
 
   const unit = (await (await fetch(`/api/units/${unitId}`)).json()).data;
 
@@ -162,7 +170,11 @@ test("finishing a charge", async () => {
     }),
   });
 
-  const unit = (await (await fetch(`/api/units/${unitId}`)).json()).data;
+  let response = await fetch(`/api/units/${unitId}`);
+
+  expect(response.status).toBe(200);
+
+  const unit = (await response.json()).data;
 
   expect(unit.status).toBe("available");
   expect(unit.charges).toStrictEqual([
