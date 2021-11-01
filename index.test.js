@@ -206,7 +206,7 @@ test("finishing a charge", async () => {
     id: unitId,
     charges: [
       server.create("charge", {
-        id: 456,
+        id: chargeId,
         started_at: "1965-04-19T19:23:03+00:00",
         finished_at: null,
       }),
@@ -234,4 +234,93 @@ test("finishing a charge", async () => {
       finished_at: "1999-04-02T22:01:19+00:00",
     },
   ]);
+});
+
+test("finishing a charge on a non-existent unit", async () => {
+  const response = await fetch("/api/units/123/charges/456", {
+    method: "PATCH",
+    body: JSON.stringify({
+      finished_at: "1999-04-02T22:01:19+00:00",
+    }),
+  });
+
+  expect(response.status).toBe(404);
+  expect(await response.json()).toStrictEqual({
+    message: "Unit [ID 123] not found.",
+  });
+});
+
+test("finishing a non-existent charge", async () => {
+  const unitId = 123;
+  server.create("unit", { id: unitId });
+
+  const response = await fetch(`/api/units/${unitId}/charges/456`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      finished_at: "1999-04-02T22:01:19+00:00",
+    }),
+  });
+
+  expect(response.status).toBe(404);
+  expect(await response.json()).toStrictEqual({
+    message: "Charge [ID 456] not found.",
+  });
+});
+
+test("finished_at is required", async () => {
+  const unitId = 123;
+  const chargeId = 456;
+  server.create("unit", {
+    id: unitId,
+    charges: [
+      server.create("charge", {
+        id: chargeId,
+        started_at: "1965-04-19T19:23:03+00:00",
+        finished_at: null,
+      }),
+    ],
+  });
+
+  const response = await fetch(`/api/units/${unitId}/charges/${chargeId}`, {
+    method: "PATCH",
+    body: JSON.stringify({}),
+  });
+
+  expect(response.status).toBe(422);
+  expect(await response.json()).toStrictEqual({
+    errors: {
+      finished_at: ["The date and time the charge finished at is required."],
+    },
+  });
+});
+
+test("finished_at must be an ISO 8601 datetime", async () => {
+  const unitId = 123;
+  const chargeId = 456;
+  server.create("unit", {
+    id: unitId,
+    charges: [
+      server.create("charge", {
+        id: chargeId,
+        started_at: "1965-04-19T19:23:03+00:00",
+        finished_at: null,
+      }),
+    ],
+  });
+
+  const response = await fetch(`/api/units/${unitId}/charges/${chargeId}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      finished_at: "1965-04-19",
+    }),
+  });
+
+  expect(response.status).toBe(422);
+  expect(await response.json()).toStrictEqual({
+    errors: {
+      finished_at: [
+        "The date and time the charge finished at must be a valid ISO 8601 date time string.",
+      ],
+    },
+  });
 });

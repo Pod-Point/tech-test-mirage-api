@@ -71,11 +71,38 @@ export function createServer(options) {
       });
 
       this.patch("/units/:unitId/charges/:chargeId", (schema, request) => {
-        let unit = schema.units.find(request.params.unitId);
-        let charge = schema.charges.find(request.params.chargeId);
+        const unitId = request.params.unitId;
+        const unit = schema.units.find(unitId);
+
+        if (!unit) {
+          return notFoundResponse(`Unit [ID ${unitId}] not found.`);
+        }
+
+        let chargeId = request.params.chargeId;
+        let charge = schema.charges.find(chargeId);
+
+        if (!charge) {
+          return notFoundResponse(`Charge [ID ${chargeId}] not found.`);
+        }
+
+        const { finished_at } = JSON.parse(request.requestBody);
+
+        if (!finished_at) {
+          return validationErrorResponse(
+            "finished_at",
+            "The date and time the charge finished at is required."
+          );
+        }
+
+        if (!isValidDateTime(finished_at)) {
+          return validationErrorResponse(
+            "finished_at",
+            "The date and time the charge finished at must be a valid ISO 8601 date time string."
+          );
+        }
 
         unit.update({ status: "available" });
-        charge.update(JSON.parse(request.requestBody));
+        charge.update({ finished_at });
       });
     },
 
