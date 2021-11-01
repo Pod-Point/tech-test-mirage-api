@@ -29,8 +29,8 @@ export function createServer(options) {
       this.get("/units");
 
       this.get("/units/:id", (schema, request) => {
-        let unitId = request.params.id;
-        let unit = schema.units.find(unitId);
+        const unitId = request.params.id;
+        const unit = schema.units.find(unitId);
 
         if (!unit) {
           return notFoundResponse(`Unit [ID ${unitId}] not found.`);
@@ -56,8 +56,8 @@ export function createServer(options) {
           );
         }
 
-        let unitId = request.params.id;
-        let unit = schema.units.find(unitId);
+        const unitId = request.params.id;
+        const unit = schema.units.find(unitId);
 
         if (!unit) {
           return notFoundResponse(`Unit [ID ${unitId}] not found.`);
@@ -78,8 +78,8 @@ export function createServer(options) {
           return notFoundResponse(`Unit [ID ${unitId}] not found.`);
         }
 
-        let chargeId = request.params.chargeId;
-        let charge = schema.charges.find(chargeId);
+        const chargeId = request.params.chargeId;
+        const charge = schema.charges.find(chargeId);
 
         if (!charge) {
           return notFoundResponse(`Charge [ID ${chargeId}] not found.`);
