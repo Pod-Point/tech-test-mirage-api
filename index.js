@@ -8,7 +8,7 @@ import {
   Response,
 } from "miragejs";
 import faker from "faker";
-import { addHours } from "date-fns";
+import { addHours, isMatch } from "date-fns";
 import { castIdsToIntegers } from "./utils";
 
 faker.locale = "en_GB";
@@ -31,13 +31,17 @@ export function createServer(options) {
       this.get("/units/:id");
 
       this.post("/units/:id/charges", (schema, request) => {
+        const { started_at } = JSON.parse(request.requestBody);
+
+        if (!isValidDateTime(started_at)) return new Response(422);
+
         let unit = schema.units.find(request.params.id);
 
         if (!unit) return new Response(404);
 
         unit.update({ status: "charging" });
         unit.createCharge({
-          ...JSON.parse(request.requestBody),
+          started_at,
           finished_at: null,
         });
       });
@@ -148,4 +152,8 @@ function seeds(server) {
       server.create("charge", { finished_at: null }),
     ],
   });
+}
+
+function isValidDateTime(string) {
+  return isMatch(string, "yyyy-MM-dd'T'HH:mm:ssxxx");
 }

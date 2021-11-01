@@ -160,6 +160,26 @@ test("starting a charge on a non-existent unit", async () => {
   expect(response.status).toBe(404);
 });
 
+test("started_at is required", async () => {
+  const response = await fetch("/api/units/123/charges", {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+
+  expect(response.status).toBe(422);
+});
+
+test("started_at must be an ISO 8601 datetime", async () => {
+  const response = await fetch("/api/units/123/charges", {
+    method: "POST",
+    body: JSON.stringify({
+      started_at: "1965-04-19",
+    }),
+  });
+
+  expect(response.status).toBe(422);
+});
+
 test("finishing a charge", async () => {
   const unitId = 123;
   const chargeId = 456;
