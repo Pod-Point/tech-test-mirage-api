@@ -167,6 +167,11 @@ test("started_at is required", async () => {
   });
 
   expect(response.status).toBe(422);
+  expect(await response.json()).toStrictEqual({
+    errors: {
+      started_at: ["The date and time the charge started at is required."],
+    },
+  });
 });
 
 test("started_at must be an ISO 8601 datetime", async () => {
@@ -178,6 +183,13 @@ test("started_at must be an ISO 8601 datetime", async () => {
   });
 
   expect(response.status).toBe(422);
+  expect(await response.json()).toStrictEqual({
+    errors: {
+      started_at: [
+        "The date and time the charge started at must be a valid ISO 8601 date time string.",
+      ],
+    },
+  });
 });
 
 test("finishing a charge", async () => {

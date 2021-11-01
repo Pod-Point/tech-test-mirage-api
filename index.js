@@ -33,11 +33,25 @@ export function createServer(options) {
       this.post("/units/:id/charges", (schema, request) => {
         const { started_at } = JSON.parse(request.requestBody);
 
-        if (!isValidDateTime(started_at)) return new Response(422);
+        if (!started_at) {
+          return validationErrorResponse(
+            "started_at",
+            "The date and time the charge started at is required."
+          );
+        }
+
+        if (!isValidDateTime(started_at)) {
+          return validationErrorResponse(
+            "started_at",
+            "The date and time the charge started at must be a valid ISO 8601 date time string."
+          );
+        }
 
         let unit = schema.units.find(request.params.id);
 
-        if (!unit) return new Response(404);
+        if (!unit) {
+          return new Response(404);
+        }
 
         unit.update({ status: "charging" });
         unit.createCharge({
@@ -156,4 +170,16 @@ function seeds(server) {
 
 function isValidDateTime(string) {
   return isMatch(string, "yyyy-MM-dd'T'HH:mm:ssxxx");
+}
+
+function validationErrorResponse(key, error) {
+  return new Response(
+    422,
+    {},
+    {
+      errors: {
+        [key]: [error],
+      },
+    }
+  );
 }
