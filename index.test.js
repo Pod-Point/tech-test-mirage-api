@@ -113,6 +113,11 @@ test("viewing a unit", async () => {
   });
 });
 
+test("viewing a non-existent unit", async () => {
+  const response = await fetch("/api/units/123");
+  expect(response.status).toBe(404);
+});
+
 test("starting a charge", async () => {
   const unitId = 123;
   server.create("unit", { id: unitId, charges: [] });
