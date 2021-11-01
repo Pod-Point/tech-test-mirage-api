@@ -1,11 +1,8 @@
 {
-  "name": "tech-test-mirage-api",
+  "name": "@pod-point/tech-test-mirage-api",
   "version": "0.1.0",
   "description": "MirageJS API for use in front end and mobile tech tests",
-  "author": {
-    "name": "Pod Point Software Team",
-    "email": "software@pod-point.com"
-  },
+  "author": "Pod Point Software Team <software@pod-point.com>",
   "scripts": {
     "test": "jest",
     "prettier": "prettier --write .",
@@ -23,5 +20,14 @@
     "babel-jest": "^27.3.1",
     "jest": "^27.3.1",
     "prettier": "^2.4.1"
-  }
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pod-Point/tech-test-mirage-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Pod-Point/tech-test-mirage-api/issues"
+  },
+  "homepage": "https://github.com/Pod-Point/tech-test-mirage-api#readme"
 }
