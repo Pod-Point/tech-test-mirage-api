@@ -5,6 +5,7 @@ import {
   hasMany,
   Model,
   Serializer,
+  Response,
 } from "miragejs";
 import faker from "faker";
 import { addHours } from "date-fns";
@@ -31,6 +32,8 @@ export function createServer(options) {
 
       this.post("/units/:id/charges", (schema, request) => {
         let unit = schema.units.find(request.params.id);
+
+        if (!unit) return new Response(404);
 
         unit.update({ status: "charging" });
         unit.createCharge({

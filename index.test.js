@@ -149,6 +149,17 @@ test("starting a charge", async () => {
   ]);
 });
 
+test("starting a charge on a non-existent unit", async () => {
+  const response = await fetch("/api/units/123/charges", {
+    method: "POST",
+    body: JSON.stringify({
+      started_at: "1965-04-19T19:23:03+00:00",
+    }),
+  });
+
+  expect(response.status).toBe(404);
+});
+
 test("finishing a charge", async () => {
   const unitId = 123;
   const chargeId = 456;
