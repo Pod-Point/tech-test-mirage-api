@@ -71,3 +71,21 @@ Jest tests can be run as follows:
 ```
 npm run test
 ```
+
+### Publishing
+
+To publish a new version of the package on NPM:
+
+- Run `npm version` to bump the version number and tag a new version:
+
+```
+npm version <major|minor|patch>
+```
+
+- Push the new version:
+
+```
+git push --follow-tags
+```
+
+- Create a release on GitHub using the new tag. The `npm-publish` workflow will automatically publish this to NPM.
