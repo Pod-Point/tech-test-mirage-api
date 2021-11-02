@@ -1,6 +1,6 @@
 {
   "name": "@pod-point/tech-test-mirage-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MirageJS API for use in front end and mobile tech tests",
   "author": "Pod Point Software Team <software@pod-point.com>",
   "scripts": {
