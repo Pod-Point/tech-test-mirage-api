@@ -68,6 +68,8 @@ export function createServer(options) {
           started_at,
           finished_at: null,
         });
+
+        return unit;
       });
 
       this.patch("/units/:unitId/charges/:chargeId", (schema, request) => {
@@ -103,6 +105,8 @@ export function createServer(options) {
 
         unit.update({ status: "available" });
         charge.update({ finished_at });
+
+        return unit;
       });
     },
 
