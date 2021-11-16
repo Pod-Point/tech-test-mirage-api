@@ -185,7 +185,7 @@ test("started_at must be an ISO 8601 datetime", async () => {
   const response = await fetch("/api/units/123/charges", {
     method: "POST",
     body: JSON.stringify({
-      started_at: "1965-04-19",
+      started_at: "19654-19",
     }),
   });
 
@@ -197,6 +197,27 @@ test("started_at must be an ISO 8601 datetime", async () => {
       ],
     },
   });
+});
+
+test.each([
+  "2021-11-16T14:11:02.203Z",
+  "2021-11-16T14:11:02Z",
+  "2021-11-16T14:11:02",
+  "2021-11-16",
+])("different ISO formats are accepted for started_at", async (started_at) => {
+  const unitId = 123;
+  server.create("unit", { id: unitId, charges: [] });
+
+  const response = await fetch(`/api/units/${unitId}/charges`, {
+    method: "POST",
+    body: JSON.stringify({
+      started_at,
+    }),
+  });
+
+  expect(response.status).toBe(201);
+
+  expect(server.db.charges[0].started_at).toBe(started_at);
 });
 
 test("finishing a charge", async () => {
@@ -311,7 +332,7 @@ test("finished_at must be an ISO 8601 datetime", async () => {
   const response = await fetch(`/api/units/${unitId}/charges/${chargeId}`, {
     method: "PATCH",
     body: JSON.stringify({
-      finished_at: "1965-04-19",
+      finished_at: "19654-19",
     }),
   });
 
@@ -324,3 +345,37 @@ test("finished_at must be an ISO 8601 datetime", async () => {
     },
   });
 });
+
+test.each([
+  "2021-11-16T14:11:02.203Z",
+  "2021-11-16T14:11:02Z",
+  "2021-11-16T14:11:02",
+  "2021-11-16",
+])(
+  "different ISO formats are accepted for finished_at",
+  async (finished_at) => {
+    const unitId = 123;
+    const chargeId = 456;
+    server.create("unit", {
+      id: unitId,
+      charges: [
+        server.create("charge", {
+          id: chargeId,
+          started_at: "1965-04-19T19:23:03+00:00",
+          finished_at: null,
+        }),
+      ],
+    });
+
+    const response = await fetch(`/api/units/${unitId}/charges/${chargeId}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        finished_at,
+      }),
+    });
+
+    expect(response.status).toBe(200);
+
+    expect(server.db.charges[0].finished_at).toBe(finished_at);
+  }
+);
