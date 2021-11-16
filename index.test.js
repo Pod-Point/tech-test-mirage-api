@@ -141,6 +141,29 @@ test("starting a charge", async () => {
 
   expect(response.status).toBe(201);
 
+  const unit = (await response.json()).data;
+
+  expect(unit.status).toBe("charging");
+  expect(unit.charges).toStrictEqual([
+    {
+      id: 1,
+      started_at: "1965-04-19T19:23:03+00:00",
+      finished_at: null,
+    },
+  ]);
+});
+
+test("starting a charge persists the update", async () => {
+  const unitId = 123;
+  server.create("unit", { id: unitId, charges: [] });
+
+  await fetch(`/api/units/${unitId}/charges`, {
+    method: "POST",
+    body: JSON.stringify({
+      started_at: "1965-04-19T19:23:03+00:00",
+    }),
+  });
+
   const unit = (await (await fetch(`/api/units/${unitId}`)).json()).data;
 
   expect(unit.status).toBe("charging");
@@ -200,6 +223,41 @@ test("started_at must be an ISO 8601 datetime", async () => {
 });
 
 test("finishing a charge", async () => {
+  const unitId = 123;
+  const chargeId = 456;
+  server.create("unit", {
+    id: unitId,
+    charges: [
+      server.create("charge", {
+        id: chargeId,
+        started_at: "1965-04-19T19:23:03+00:00",
+        finished_at: null,
+      }),
+    ],
+  });
+
+  const response = await fetch(`/api/units/${unitId}/charges/${chargeId}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      finished_at: "1999-04-02T22:01:19+00:00",
+    }),
+  });
+
+  expect(response.status).toBe(200);
+
+  const unit = (await response.json()).data;
+
+  expect(unit.status).toBe("available");
+  expect(unit.charges).toStrictEqual([
+    {
+      id: chargeId,
+      started_at: "1965-04-19T19:23:03+00:00",
+      finished_at: "1999-04-02T22:01:19+00:00",
+    },
+  ]);
+});
+
+test("finishing a charge persists the update", async () => {
   const unitId = 123;
   const chargeId = 456;
   server.create("unit", {
