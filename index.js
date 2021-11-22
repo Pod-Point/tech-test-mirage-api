@@ -8,7 +8,7 @@ import {
   Response,
 } from "miragejs";
 import faker from "faker";
-import { addHours, isMatch } from "date-fns";
+import { addHours, parseISO } from "date-fns";
 import { castIdsToIntegers } from "./utils";
 
 faker.locale = "en_GB";
@@ -210,7 +210,7 @@ function seeds(server) {
 }
 
 function isValidDateTime(string) {
-  return isMatch(string, "yyyy-MM-dd'T'HH:mm:ssxxx");
+  return !isNaN(parseISO(string).getTime());
 }
 
 function validationErrorResponse(key, error) {
